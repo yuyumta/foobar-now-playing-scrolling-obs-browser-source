@@ -1,4 +1,4 @@
-# foobar-now-playing-scrolling-obs-browser-source
+
 
 ![image](https://github.com/user-attachments/assets/5daa6128-2cf7-4139-ae54-03c14cf5bc3d)
 
