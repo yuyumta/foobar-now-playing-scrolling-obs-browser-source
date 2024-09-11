@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .scrollingLine {
+            white-space: nowrap;
+            overflow: hidden;
+            border: 0px solid #ccc;
+            margin-bottom: 5px;
+            font-family: 'MS Gothic';
+            display: flex;
+        }
+
+        .scrollingText {
+            color: white;
+            animation: scrollText linear infinite;
+            animation-duration: 10s; /* Adjust the duration as needed */
+        }
+
+        @keyframes scrollText {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    const filenames = ['foobar.txt'];
+    let currentContent = '';
+
+    function fetchAndDisplay(filename) {
+        fetch(filename)
+            .then(response => response.text())
+            .then(text => {
+                if (text.trim() === currentContent.trim()) {
+                    return;
+                }
+
+                currentContent = text;
+
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                document.body.innerHTML = '';
+
+                lines.forEach((line, index) => {
+                    const lineContainer = document.createElement('div');
+                    lineContainer.classList.add('scrollingLine');
+                    document.body.appendChild(lineContainer);
+
+                    const lineText = document.createElement('div');
+                    lineText.classList.add('scrollingText');
+                    lineText.textContent = line.trim();
+
+                    lineText.style.fontFamily = 'MS Gothic';
+
+                    lineContainer.appendChild(lineText);
+
+                    // Calculate effective character count (considering non-ASCII characters as double)
+                    const effectiveCharCount = Array.from(line.trim()).reduce((count, char) => {
+                        return count + (char.match(/[^\x00-\x7F]/) ? 2 : 1);
+                    }, 0);
+
+                    if (effectiveCharCount <= 12) {
+                        // Scroll lines with 10 or fewer effective characters
+                        lineText.style.animation = 'scrollText linear infinite';
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching file:', error));
+    }
+
+    function updateContentPeriodically() {
+        filenames.forEach(filename => {
+            fetchAndDisplay(filename);
+        });
+    }
+
+    updateContentPeriodically();
+
+    // Periodically update content every 3 seconds
+    setInterval(updateContentPeriodically, 3000);
+</script>
+
+</body>
+</html>
