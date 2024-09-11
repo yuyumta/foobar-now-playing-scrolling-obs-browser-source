@@ -1,0 +1,1 @@
+# foobar-now-playing-scrolling-obs-browser-source
